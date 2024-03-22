@@ -1,0 +1,69 @@
+% Specify the file path of the Excel file without double quotes
+file_path = 'C:\Users\cheec\Downloads\Met_values.xlsx';
+
+% Use readtable to import data from Excel into a MATLAB table
+try
+    dataset_table = readtable(file_path);
+catch
+    disp('Failed to read data from the Excel file.');
+    return;
+end
+
+% Display the imported dataset table
+disp(dataset_table);
+
+% Display unique activity names in the table for debugging
+disp('Unique Activity Names:');
+disp(unique(dataset_table.Activity));
+
+% Display all column names in the MATLAB table
+disp('Column Names:');
+disp(dataset_table.Properties.VariableNames);
+
+% Convert activity names to lowercase for case-insensitive search
+dataset_table.Activity = lower(dataset_table.Activity);
+% Filter the table to select rows where the activity contains 'running'
+running_activities = dataset_table(contains(dataset_table.Activity, 'running'), :);
+
+% Filter the table to select rows where the activity contains 'bicycling'
+bicycling_activities = dataset_table(contains(dataset_table.Activity, 'bicycling'), :);
+
+% Filter the table to select rows where the activity contains 'walking'
+walking_activities = dataset_table(contains(dataset_table.Activity, 'walking'), :);
+
+% Convert activity names to categorical variables
+X_running = categorical(running_activities.Activity);
+X_bicycling = categorical(bicycling_activities.Activity);
+X_walking = categorical(walking_activities.Activity);
+
+% Convert categorical variables into dummy variables (one-hot encoding)
+X_running_encoded = dummyvar(X_running);
+X_bicycling_encoded = dummyvar(X_bicycling);
+X_walking_encoded = dummyvar(X_walking);
+
+% Extract target variable (METs) for running, bicycling, and walking activities
+y_running = running_activities.METs;
+y_bicycling = bicycling_activities.METs;
+y_walking = walking_activities.METs;
+
+% Train simple linear regression models for running, bicycling, and walking activities
+mdl_running = fitlm(X_running_encoded, y_running);
+mdl_bicycling = fitlm(X_bicycling_encoded, y_bicycling);
+mdl_walking = fitlm(X_walking_encoded, y_walking);
+
+% Make predictions for new data (optional)
+new_activity_running = {'running'};
+new_activity_bicycling = {'bicycling'};
+new_activity_walking = {'walking'};
+
+new_activity_running_encoded = dummyvar(categorical(new_activity_running));
+new_activity_bicycling_encoded = dummyvar(categorical(new_activity_bicycling));
+new_activity_walking_encoded = dummyvar(categorical(new_activity_walking));
+
+predicted_MET_running = predict(mdl_running, new_activity_running_encoded);
+predicted_MET_bicycling = predict(mdl_bicycling, new_activity_bicycling_encoded);
+predicted_MET_walking = predict(mdl_walking, new_activity_walking_encoded);
+
+disp(['Predicted MET value for running activity: ', num2str(predicted_MET_running)]);
+disp(['Predicted MET value for bicycling activity: ', num2str(predicted_MET_bicycling)]);
+disp(['Predicted MET value for walking activity: ', num2str(predicted_MET_walking)]);
