@@ -6,6 +6,9 @@ gender = []; % Initialize gender variable
 activity_level = []; % Initialize activity level variable
 total_calories_burned = 0; % Initialize total calories burned for the day
 caloric_consumption_today = 0; % Initialize caloric consumption for the day
+% Initialize arrays to store activity names and their respective calories burned
+activity_names = {};
+calories_burned_per_activity = [];
 
 while true
     % Prompt the user to choose between calculating BMR, tracking calories burned, seeing caloric consumption for the day, or exiting
@@ -70,43 +73,39 @@ while true
 
             % Display the calculated Basal Metabolic Rate (BMR)
             disp(['Your Basal Metabolic Rate (BMR) is: ', num2str(bmr), ' calories per day.']);
-
+    
         case 2 % Track calories burned for the day
-            if isempty(bmr)
-                disp('Please calculate your Basal Metabolic Rate (BMR) first.');
-                continue; % Skip to the next iteration of the loop if BMR is not calculated
-            end
-            
-      % Prompt the user to input the duration (in minutes) spent on various activities
-disp('Enter the duration (in minutes) spent on each activity (Enter 0 to submit):');
-activities = {'Sitting', 'Walking', 'Running', 'Cycling', 'Swimming'};
-met_values = [1.0, 3.8, 8.0, 7.0, 6.0]; % MET values for each activity
-
-while true
-    disp('Available activities:');
-    for i = 1:length(activities)
-        disp([num2str(i), '. ', activities{i}]);
+    if isempty(bmr)
+        disp('Please calculate your Basal Metabolic Rate (BMR) first.');
+        continue; % Skip to the next iteration of the loop if BMR is not calculated
     end
-    disp('0. Submit');
 
-    activity_index = input('Enter the activity number: ');
-    if activity_index == 0
-        break; % Exit the loop if the user chooses to submit
-    elseif activity_index < 1 || activity_index > length(activities)
-        disp('Invalid activity number. Please enter a number between 1 and 5.');
-    else
-        duration = input(['Enter duration for ', activities{activity_index}, ' (in minutes): ']);
-        calories_burned = met_values(activity_index) * duration;
-        total_calories_burned = total_calories_burned + calories_burned;
+    % Prompt the user to input the duration (in minutes) spent on various activities
+    disp('Enter the duration (in minutes) spent on each activity (Enter 0 to submit):');
+    activities = {'Walking', 'Running', 'Cycling'};
+    met_values = [5.6, 11.3, 8.6]; % MET values for each activity
+
+    while true
+        disp('Available activities:');
+        for i = 1:length(activities)
+            disp([num2str(i), '. ', activities{i}]);
+        end
+        disp('0. Submit');
+
+        activity_index = input('Enter the activity number: ');
+        if activity_index == 0
+            break; % Exit the loop if the user chooses to submit
+        elseif activity_index < 1 || activity_index > length(activities)
+            disp('Invalid activity number. Please enter a number between 1 and 3.');
+        else
+            duration = input(['Enter duration for ', activities{activity_index}, ' (in minutes): ']);
+            calories_burned = met_values(activity_index) * duration;
+            total_calories_burned = total_calories_burned + calories_burned;
+        end
     end
-end
 
-% Display the total calories burned for the day
-disp(['Total calories burned for the day: ', num2str(total_calories_burned), ' calories.']);
-
-
-            % Display the total calories burned for the day
-            disp(['Total calories burned for the day: ', num2str(total_calories_burned), ' calories.']);
+    % Display the total calories burned for the day
+    disp(['Total calories burned for the day: ', num2str(total_calories_burned), ' calories.']);
 
         case 3 % See caloric consumption for the day
             if isempty(bmr)
