@@ -1,0 +1,133 @@
+bmr = []; % Initialize BMR variable
+weight = []; % Initialize weight variable
+height_cm = []; % Initialize height variable
+age = []; % Initialize age variable
+gender = []; % Initialize gender variable
+activity_level = []; % Initialize activity level variable
+total_calories_burned = 0; % Initialize total calories burned for the day
+caloric_consumption_today = 0; % Initialize caloric consumption for the day
+
+while true
+    % Prompt the user to choose between calculating BMR, tracking calories burned, seeing caloric consumption for the day, or exiting
+    disp('Choose an option:');
+    disp('1. Calculate Basal Metabolic Rate (BMR)');
+    disp('2. Track calories burned for the day');
+    disp('3. See caloric consumption for the day');
+    disp('4. Exit');
+    option = input('Enter your choice (0, 1, 2, 3, or 4): ');
+
+    switch option
+        case 1 % Calculate BMR
+            if isempty(bmr)
+                % Prompt the user to input their weight in kilograms, height in centimeters, age in years, gender, and activity level
+                if isempty(weight)
+                    weight = input('Enter your weight (in kilograms): ');
+                end
+                if isempty(height_cm)
+                    height_cm = input('Enter your height (in centimeters): ');
+                end
+                if isempty(age)
+                    age = input('Enter your age (in years): ');
+                end
+                if isempty(gender)
+                    gender = input('Enter your gender (1 for male, 2 for female): ');
+                end
+                if isempty(activity_level)
+                    activity_level = input('Enter your activity level (1 for sedentary, 2 for lightly active, 3 for moderately active, 4 for very active, 5 for extremely active): ');
+                end
+
+                % Calculate Basal Metabolic Rate (BMR) based on gender
+                if gender == 1 % Male
+                    % For males: BMR = 66 + (13.7 × weight in kg) + (5 × height in cm) - (6.8 × age in years)
+                    bmr = 66 + (13.7 * weight) + (5 * height_cm) - (6.8 * age);
+                elseif gender == 2 % Female
+                    % For females: BMR = 655 + (9.6 × body weight in kg) + (1.8 × body height in cm) - (4.7 × age in years)
+                    bmr = 655 + (9.6 * weight) + (1.8 * height_cm) - (4.7 * age);
+                else
+                    disp('Invalid gender input. Please enter 1 for male or 2 for female.');
+                    continue; % Skip to the next iteration of the loop if gender is invalid
+                end
+
+                % Adjust BMR based on activity level
+                switch activity_level
+                    case 1 % Sedentary
+                        bmr = bmr * 1.2;
+                    case 2 % Lightly active
+                        bmr = bmr * 1.375;
+                    case 3 % Moderately active
+                        bmr = bmr * 1.55;
+                    case 4 % Very active
+                        bmr = bmr * 1.725;
+                    case 5 % Extremely active
+                        bmr = bmr * 1.9;
+                    otherwise
+                        disp('Invalid activity level input.');
+                        continue; % Skip to the next iteration of the loop if activity level is invalid
+                end
+            else
+                disp('BMR is already calculated.');
+            end
+
+            % Display the calculated Basal Metabolic Rate (BMR)
+            disp(['Your Basal Metabolic Rate (BMR) is: ', num2str(bmr), ' calories per day.']);
+
+        case 2 % Track calories burned for the day
+            if isempty(bmr)
+                disp('Please calculate your Basal Metabolic Rate (BMR) first.');
+                continue; % Skip to the next iteration of the loop if BMR is not calculated
+            end
+            
+      % Prompt the user to input the duration (in minutes) spent on various activities
+disp('Enter the duration (in minutes) spent on each activity (Enter 0 to submit):');
+activities = {'Sitting', 'Walking', 'Running', 'Cycling', 'Swimming'};
+met_values = [1.0, 3.8, 8.0, 7.0, 6.0]; % MET values for each activity
+
+while true
+    disp('Available activities:');
+    for i = 1:length(activities)
+        disp([num2str(i), '. ', activities{i}]);
+    end
+    disp('0. Submit');
+
+    activity_index = input('Enter the activity number: ');
+    if activity_index == 0
+        break; % Exit the loop if the user chooses to submit
+    elseif activity_index < 1 || activity_index > length(activities)
+        disp('Invalid activity number. Please enter a number between 1 and 5.');
+    else
+        duration = input(['Enter duration for ', activities{activity_index}, ' (in minutes): ']);
+        calories_burned = met_values(activity_index) * duration;
+        total_calories_burned = total_calories_burned + calories_burned;
+    end
+end
+
+% Display the total calories burned for the day
+disp(['Total calories burned for the day: ', num2str(total_calories_burned), ' calories.']);
+
+
+            % Display the total calories burned for the day
+            disp(['Total calories burned for the day: ', num2str(total_calories_burned), ' calories.']);
+
+        case 3 % See caloric consumption for the day
+            if isempty(bmr)
+                disp('Please calculate your Basal Metabolic Rate (BMR) first.');
+                continue; % Skip to the next iteration of the loop if BMR is not calculated
+            end
+            
+            % Display the caloric consumption for the day after adding in the calories burned
+            if total_calories_burned == 0
+                disp('No calories burned tracked yet.');
+            else
+                caloric_consumption_today = bmr + total_calories_burned;
+                disp(['Caloric consumption for the day (including calories burned): ', num2str(caloric_consumption_today), ' calories.']);
+            end
+
+
+        case 4 % Exit
+            disp('Exiting program.');
+            break;
+
+        otherwise
+            disp('Invalid option. Please enter 0, 1, 2, 3, or 4.');
+    end
+end
